@@ -63,6 +63,8 @@ mod catchup;
 mod commands;
 mod commit_log;
 pub(crate) use commit_log::CommitLogOverlay;
+pub(crate) mod control_tower;
+pub(crate) use control_tower::ControlTowerOverlay;
 mod cloud_environment;
 mod commands_cloud;
 mod commands_colors;
@@ -1860,6 +1862,8 @@ pub struct App {
     model_status_content: String,
     /// Commit log overlay (None = not visible)
     commit_log_overlay: Option<commit_log::CommitLogOverlay>,
+    /// Control Tower overlay (None = not visible)
+    control_tower_overlay: Option<control_tower::ControlTowerOverlay>,
     /// Session picker overlay (None = not visible)
     session_picker_overlay: Option<RefCell<super::session_picker::SessionPicker>>,
     session_picker_mode: SessionPickerMode,

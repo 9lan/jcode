@@ -3027,6 +3027,18 @@ fn draw_inner(frame: &mut Frame, app: &dyn TuiState) {
         return;
     }
 
+    if let Some(overlay) = app.control_tower_overlay() {
+        overlays::draw_control_tower_overlay(frame, area, overlay, app);
+        finalize_frame_metrics(
+            app,
+            total_start,
+            Duration::ZERO,
+            total_start.elapsed(),
+            None,
+        );
+        return;
+    }
+
     if let Some(scroll) = app.changelog_scroll() {
         overlays::draw_changelog_overlay(frame, area, scroll, app);
         finalize_frame_metrics(

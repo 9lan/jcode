@@ -1168,6 +1168,16 @@ pub trait TuiState {
     fn commit_log_overlay(&self) -> Option<&app::CommitLogOverlay> {
         None
     }
+    /// Control Tower overlay: a read-only overview of this session's own
+    /// swarm fleet and background tasks (None = not showing).
+    fn control_tower_overlay(&self) -> Option<&app::ControlTowerOverlay> {
+        None
+    }
+    /// Live rows the Control Tower feed renders. Default empty for state
+    /// impls (e.g. replay) that do not track swarm/background state.
+    fn control_tower_rows(&self) -> Vec<app::control_tower::ControlTowerRow> {
+        Vec::new()
+    }
     /// Session picker overlay for /resume command
     fn session_picker_overlay(&self) -> Option<&std::cell::RefCell<session_picker::SessionPicker>>;
     /// Login picker overlay for /login command

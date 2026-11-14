@@ -2431,6 +2431,10 @@ pub(super) fn handle_pre_control_shortcuts(
         app.toggle_todo_card();
         return true;
     }
+    if app.toggle_keys.control_tower.matches(code, modifiers) {
+        app.toggle_control_tower();
+        return true;
+    }
     if app.dictation_key_matches(code, modifiers) {
         if super::commands_dispatch::ssh_local_action_blocked(app, "Dictation setup") {
             return true;
@@ -2733,6 +2737,8 @@ pub(super) fn handle_scroll_overlay_key(app: &mut App, code: KeyCode) -> Result<
         if matches!(code, KeyCode::Esc | KeyCode::Enter | KeyCode::Char('q')) {
             app.close_panel_image_preview();
         }
+    } else if app.control_tower_overlay.is_some() {
+        app.handle_control_tower_key(code)?;
     } else if app.commit_log_overlay.is_some() {
         app.handle_commit_log_key(code)?;
     } else if app.changelog_scroll.is_some() {

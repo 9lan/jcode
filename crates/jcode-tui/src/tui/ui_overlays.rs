@@ -12,6 +12,125 @@ use ratatui::{
 
 use super::selection_highlight::highlight_line_selection;
 
+/// Control Tower overlay (default Ctrl+Shift+H): a read-only overview of this
+/// session's own swarm fleet and background tasks, built from the same
+/// `App`/`TuiState` fields the chat view already reads. No fabricated
+/// progress: a row with no live telemetry just omits that field.
+pub(super) fn draw_control_tower_overlay(
+    frame: &mut Frame,
+    area: Rect,
+    overlay: &crate::tui::app::ControlTowerOverlay,
+    app: &dyn TuiState,
+) {
+    use crate::tui::app::control_tower::ControlTowerRow;
+
+    clear_area(frame, area);
+
+    let rows = app.control_tower_rows();
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title(format!(" Control Tower · {} agent(s) ", rows.len()))
+        .title_bottom(Line::from(Span::styled(
+            " j/k move, d/u page, g/G top/bottom, q/Esc close ",
+            Style::default().fg(dim_color()),
+        )));
+    let inner = block.inner(area);
+    frame.render_widget(block, area);
+    if inner.width == 0 || inner.height == 0 {
+        return;
+    }
+
+    if rows.is_empty() {
+        frame.render_widget(
+            Paragraph::new(Line::from(Span::styled(
+                " No active swarm agents or background tasks in this session.",
+                Style::default().fg(dim_color()),
+            ))),
+            inner,
+        );
+        return;
+    }
+
+    let name_style = Style::default()
+        .fg(accent_color())
+        .add_modifier(Modifier::BOLD);
+    let status_style = Style::default().fg(rgb(130, 170, 230));
+    let detail_style = Style::default().fg(rgb(220, 220, 230));
+    let dim_style = Style::default().fg(dim_color());
+
+    let height = inner.height as usize;
+    let selected = overlay.scroll.min(rows.len() - 1);
+    let start = selected
+        .saturating_sub(height / 2)
+        .min(rows.len().saturating_sub(height));
+
+    let lines: Vec<Line<'static>> = rows
+        .iter()
+        .enumerate()
+        .skip(start)
+        .take(height)
+        .map(|(idx, row)| {
+            let is_selected = idx == selected;
+            let bg = if is_selected {
+                Some(rgb(45, 50, 65))
+            } else {
+                None
+            };
+            let apply_bg = |style: Style| {
+                if let Some(bg) = bg {
+                    style.bg(bg)
+                } else {
+                    style
+                }
+            };
+            match row {
+                ControlTowerRow::SwarmMember(member) => {
+                    let name = member
+                        .friendly_name
+                        .clone()
+                        .unwrap_or_else(|| member.session_id.clone());
+                    let role = member.role.as_deref().unwrap_or("agent");
+                    let detail = member
+                        .task_label
+                        .clone()
+                        .or_else(|| member.detail.clone())
+                        .unwrap_or_default();
+                    let elapsed = member
+                        .runtime
+                        .elapsed_secs
+                        .map(|s| format!(" · {s}s"))
+                        .unwrap_or_default();
+                    Line::from(vec![
+                        Span::styled(format!(" {name:<20}"), apply_bg(name_style)),
+                        Span::styled(format!("{role:<11}"), apply_bg(dim_style)),
+                        Span::styled(format!("{:<10}", member.status), apply_bg(status_style)),
+                        Span::styled(format!("{detail}{elapsed}"), apply_bg(detail_style)),
+                    ])
+                }
+                ControlTowerRow::BackgroundTask(task) => {
+                    let status = match task.status {
+                        crate::tui::BackgroundTaskRowStatus::Running => "running",
+                        crate::tui::BackgroundTaskRowStatus::Completed => "completed",
+                        crate::tui::BackgroundTaskRowStatus::Failed => "failed",
+                    };
+                    let pct = task
+                        .percent
+                        .map(|p| format!(" ({p:.0}%)"))
+                        .unwrap_or_default();
+                    Line::from(vec![
+                        Span::styled(format!(" {:<20}", task.task_id), apply_bg(name_style)),
+                        Span::styled(format!("{:<11}", "bg-task"), apply_bg(dim_style)),
+                        Span::styled(format!("{status:<10}"), apply_bg(status_style)),
+                        Span::styled(format!("{}{pct}", task.label), apply_bg(detail_style)),
+                    ])
+                }
+            }
+        })
+        .collect();
+
+    frame.render_widget(Paragraph::new(lines), inner);
+}
+
 pub(super) fn draw_changelog_overlay(
     frame: &mut Frame,
     area: Rect,

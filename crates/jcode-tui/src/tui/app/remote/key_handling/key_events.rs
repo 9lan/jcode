@@ -390,6 +390,10 @@ pub(super) async fn handle_remote_key_internal(
         }
         return Ok(());
     }
+    if app.toggle_keys.control_tower.matches(code, modifiers) {
+        app.toggle_control_tower();
+        return Ok(());
+    }
     if app.centered_toggle_keys.matches(code, modifiers) {
         app.record_keybinding_fast(crate::tui::app::shortcut_hints::LearnableAction::Alignment);
         app.toggle_centered_mode();

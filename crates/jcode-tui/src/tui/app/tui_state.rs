@@ -2257,6 +2257,14 @@ impl crate::tui::TuiState for App {
         self.commit_log_overlay.as_ref()
     }
 
+    fn control_tower_overlay(&self) -> Option<&crate::tui::app::ControlTowerOverlay> {
+        self.control_tower_overlay.as_ref()
+    }
+
+    fn control_tower_rows(&self) -> Vec<crate::tui::app::control_tower::ControlTowerRow> {
+        self.control_tower_rows_ref()
+    }
+
     fn session_picker_overlay(
         &self,
     ) -> Option<&RefCell<crate::tui::session_picker::SessionPicker>> {

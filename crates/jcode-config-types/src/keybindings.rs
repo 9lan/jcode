@@ -359,6 +359,14 @@ pub const KEYBINDING_DEFAULTS: &[KeybindingDefault] = &[
         macos: PlatformDefault::dev("ctrl+space"),
         other: PlatformDefault::dev("ctrl+space"),
     },
+    KeybindingDefault {
+        id: "control_tower_toggle",
+        description: "Open/close the Control Tower overview (sessions, agents, activity)",
+        // Ctrl+T is already queue_mode_toggle; Ctrl+Shift+T is free on both
+        // platform families (confirmed against KEYBINDING_DEFAULTS above).
+        macos: PlatformDefault::dev("ctrl+shift+h"),
+        other: PlatformDefault::dev("ctrl+shift+h"),
+    },
 ];
 
 /// Look up a keybinding action by id.

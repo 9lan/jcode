@@ -434,6 +434,7 @@ pub struct ToggleKeys {
     pub info_widget: ToggleBinding,
     pub todo_card: ToggleBinding,
     pub swarm_panel_focus: ToggleBinding,
+    pub control_tower: ToggleBinding,
 }
 
 pub fn load_toggle_keys() -> ToggleKeys {
@@ -464,6 +465,13 @@ pub fn load_toggle_keys() -> ToggleKeys {
         swarm_panel_focus: ToggleBinding::load_with_default(
             &cfg.keybindings.swarm_panel_focus,
             swarm_panel_focus_default(),
+        ),
+        control_tower: ToggleBinding::load_with_default(
+            &cfg.keybindings.control_tower_toggle,
+            KeyBinding {
+                code: KeyCode::Char('h'),
+                modifiers: KeyModifiers::CONTROL | KeyModifiers::SHIFT,
+            },
         ),
     }
 }
