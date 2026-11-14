@@ -12,7 +12,7 @@ use ratatui::{
 
 use super::selection_highlight::highlight_line_selection;
 
-/// Control Tower overlay (default Ctrl+Shift+H): a read-only overview of this
+/// Control Tower overlay (default Alt+W): a read-only overview of this
 /// session's own swarm fleet and background tasks, built from the same
 /// `App`/`TuiState` fields the chat view already reads. No fabricated
 /// progress: a row with no live telemetry just omits that field.

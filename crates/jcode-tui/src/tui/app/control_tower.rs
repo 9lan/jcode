@@ -1,4 +1,4 @@
-//! Control Tower overlay (default Ctrl+Shift+H): a read-only overview of the
+//! Control Tower overlay (default Alt+W): a read-only overview of the
 //! session's own runtime state — swarm fleet, background tasks, and recent
 //! activity — built from the same `App` fields the normal chat view already
 //! reads. It is another *view* of the running session, not a second runtime:
@@ -105,16 +105,16 @@ mod tests {
         }
     }
 
-    /// Ctrl+Shift+H, dispatched through the real key-handling path (not the
-    /// toggle fn directly), must open the overlay and Esc must close it
-    /// again, without touching chat state: same draft input, same scroll
-    /// offset, same session. It is a second *view*, not a second runtime or
-    /// a reset of the current one. (Esc/q close, matching every other
-    /// overlay sharing `handle_scroll_overlay_key`: once an overlay is open
-    /// it owns all keys, so re-pressing the open chord does not reach the
-    /// toggle fn — same as `commit_log_overlay`.)
+    /// Alt+W, dispatched through the real key-handling path (not the toggle
+    /// fn directly), must open the overlay and Esc must close it again,
+    /// without touching chat state: same draft input, same scroll offset,
+    /// same session. It is a second *view*, not a second runtime or a reset
+    /// of the current one. (Esc/q close, matching every other overlay
+    /// sharing `handle_scroll_overlay_key`: once an overlay is open it owns
+    /// all keys, so re-pressing the open chord does not reach the toggle fn
+    /// — same as `commit_log_overlay`.)
     #[test]
-    fn ctrl_shift_h_opens_and_esc_closes_control_tower_through_real_dispatch() {
+    fn alt_w_opens_and_esc_closes_control_tower_through_real_dispatch() {
         let provider: Arc<dyn Provider> = Arc::new(MockProvider);
         let rt = tokio::runtime::Runtime::new().expect("runtime");
         let registry = rt.block_on(crate::tool::Registry::new(provider.clone()));
@@ -123,13 +123,13 @@ mod tests {
         app.scroll_offset = 7;
 
         use crossterm::event::{KeyCode, KeyModifiers};
-        let chord = KeyModifiers::CONTROL | KeyModifiers::SHIFT;
 
         assert!(app.control_tower_overlay.is_none());
-        app.handle_key(KeyCode::Char('h'), chord).unwrap();
+        app.handle_key(KeyCode::Char('w'), KeyModifiers::ALT)
+            .unwrap();
         assert!(
             app.control_tower_overlay.is_some(),
-            "Ctrl+Shift+H should open the Control Tower overlay"
+            "Alt+W should open the Control Tower overlay"
         );
         assert_eq!(app.input, "unsent draft");
         assert_eq!(app.scroll_offset, 7);

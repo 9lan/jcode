@@ -469,8 +469,8 @@ pub fn load_toggle_keys() -> ToggleKeys {
         control_tower: ToggleBinding::load_with_default(
             &cfg.keybindings.control_tower_toggle,
             KeyBinding {
-                code: KeyCode::Char('h'),
-                modifiers: KeyModifiers::CONTROL | KeyModifiers::SHIFT,
+                code: KeyCode::Char('w'),
+                modifiers: KeyModifiers::ALT,
             },
         ),
     }

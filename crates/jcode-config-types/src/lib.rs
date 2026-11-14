@@ -1086,7 +1086,7 @@ pub struct KeybindingsConfig {
     /// Session picker Enter action: "current-terminal" (default) or "new-terminal".
     /// Ctrl+Enter performs the alternate action.
     pub session_picker_enter: SessionPickerResumeAction,
-    /// Toggle the Control Tower overview overlay (default: "ctrl+shift+h").
+    /// Toggle the Control Tower overview overlay (default: "alt+w").
     /// Set "" to disable.
     pub control_tower_toggle: String,
 }
@@ -1144,7 +1144,7 @@ impl Default for KeybindingsConfig {
             ),
             voice_input: get("voice_input", "ctrl+space"),
             session_picker_enter: SessionPickerResumeAction::CurrentTerminal,
-            control_tower_toggle: get("control_tower_toggle", "ctrl+shift+h"),
+            control_tower_toggle: get("control_tower_toggle", "alt+w"),
         }
     }
 }

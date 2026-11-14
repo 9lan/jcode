@@ -362,10 +362,15 @@ pub const KEYBINDING_DEFAULTS: &[KeybindingDefault] = &[
     KeybindingDefault {
         id: "control_tower_toggle",
         description: "Open/close the Control Tower overview (sessions, agents, activity)",
-        // Ctrl+T is already queue_mode_toggle; Ctrl+Shift+T is free on both
-        // platform families (confirmed against KEYBINDING_DEFAULTS above).
-        macos: PlatformDefault::dev("ctrl+shift+h"),
-        other: PlatformDefault::dev("ctrl+shift+h"),
+        // Ctrl+T is already queue_mode_toggle; Ctrl+H is already the
+        // diagram-focus return-to-chat key. Ctrl+Shift+<letter> needs the
+        // Kitty keyboard protocol to be distinguishable from plain
+        // Ctrl+<letter>; terminals without it (e.g. GNOME Terminal/VTE)
+        // report both chords identically, so a Ctrl+Shift+ default is
+        // unreliable. Alt+W works everywhere without that protocol and is
+        // free on both platforms.
+        macos: PlatformDefault::dev("alt+w"),
+        other: PlatformDefault::dev("alt+w"),
     },
 ];
 
